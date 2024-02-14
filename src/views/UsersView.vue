@@ -17,7 +17,6 @@
 export default {
   data() {
     return {
-      // data: JSON.parse(localStorage.getItem('users')) ?? ''
       data: []
     }
   },
@@ -26,16 +25,9 @@ export default {
       console.log(this.data)
     }
   },
-  // watch: {
-  //   data() {
-  //     console.log('updated :P')
-  //     localStorage.setItem('users', JSON.stringify(this.data));
-  //   }
-  // },
   async mounted(){
     const response = await fetch("https://dummyjson.com/users");
     const info = await response.json();
-    console.log(info.users)
     this.data = [...this.data, ...info.users]
   }
 }

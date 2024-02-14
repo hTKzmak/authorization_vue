@@ -14,6 +14,8 @@
                 <input type="password" name="password" id="password" v-model="passwordInput">
             </div>
             <button class="submit" type="submit" @click="loginCheck(usernameInput, passwordInput)">Submit</button>
+            <!-- <button class="submit" @click="checkToken">Check</button>
+            <button class="submit" @click="getData">Info</button> -->
         </div>
     </div>
 </template>
@@ -25,7 +27,8 @@ export default {
         return {
             usernameInput: 'kminchelle',
             passwordInput: '0lelplR',
-            warning_display: 'none'
+            warning_display: 'none',
+            data: []
         };
     },
     methods: {
@@ -34,24 +37,50 @@ export default {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-
                     username: username,
                     password: password,
                 })
             })
                 .then(res => res.json())
                 .then(item => {
-                    if(item.username == username){
-                        console.log(item)
-                        console.log(item.token)
+                    if (item.username == username) {
+                        console.log('Token id updated')
                         this.warning_display = 'none';
                         localStorage.setItem('token', JSON.stringify(item.token));
+                        this.checkToken()
                     }
-                    else{
-                        alert('Invalid credentials')
+                    else {
                         this.warning_display = 'block';
                     }
                 })
+        },
+
+        checkToken() {
+            fetch('https://dummyjson.com/auth/me', {
+                method: 'GET',
+                headers: {
+                    'Authorization': JSON.parse(localStorage.getItem('token'))
+                },
+            })
+                .then(res => res.json())
+                .then(this.checkUser());
+
+        },
+
+        checkUser() {
+            fetch('https://dummyjson.com/auth/me', {
+                method: 'GET',
+                headers: {
+                    'Authorization': JSON.parse(localStorage.getItem('token'))
+                },
+            })
+                .then(res => res.json())
+                .then(item => localStorage.setItem('user', JSON.stringify({ username: item.username, name: item.firstName, lastname: item.lastName, gender: item.gender, email: item.email, image: item.image })))
+                .then(console.log(JSON.parse(localStorage.getItem('user'))))
+        },
+
+        getData() {
+            console.log(this.data)
         }
     }
 }
@@ -72,7 +101,7 @@ export default {
     align-items: center;
 }
 
-.warning{
+.warning {
     color: #FF0000;
     font-size: 16px;
     font-weight: 500;
