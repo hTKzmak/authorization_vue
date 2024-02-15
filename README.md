@@ -1,1 +1,1 @@
-Status: competed
+Status: completed
